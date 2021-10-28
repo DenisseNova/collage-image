@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const expressFileUpload = require('express-fileupload');
+const fs = require('fs')
 
 app.use(
   expressFileUpload({
@@ -10,15 +11,14 @@ app.use(
       'El peso de la imagen que intenta subir supera el limite permitido'
   })
 );
-app.use(express.json())
-app.use("/imgs", express.static(__dirname + "/imgs"))
+app.use('/imgs', express.static(__dirname + '/imgs'))
 
 app.get('/', (req,res) => {
   res.sendFile(__dirname + '/formulario.html')
 });
 
-app.get("/collage", (req, res) => {
-  res.sendFile(__dirname + "/collage.html")
+app.get('/collage', (req, res) => {
+  res.sendFile(__dirname + '/collage.html')
 })
 
 app.post('/imagen', (req, res) => {
@@ -29,7 +29,11 @@ app.post('/imagen', (req, res) => {
   })
 })
 
-
+app.get('/deleteImg/:imagen', (req, res) => {
+  const { imagen } = req.params;
+  fs.unlinkSync(__dirname + `/imgs/${imagen}`)
+  res.redirect("/collage")
+})
 
 app.listen(3000, () => {
   console.log('servidor 2 arriba')
